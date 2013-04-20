@@ -11,10 +11,10 @@ def add_match_item_to_cell(key, rules_table, cell, back_pointers):
         cell.add_item(item)
     
 
-def find_inferable_items(sentence, i, j, rules_table, chart):
+def add_inferable_items(sentence, i, j, rules_table, chart, cell):
     # debug
     #result = []
-    cell = Cell()
+    #cell = Cell()
     cell.beg = i
     cell.end = j
     for i1 in xrange(i,j+1):
@@ -23,8 +23,6 @@ def find_inferable_items(sentence, i, j, rules_table, chart):
             key += ' '.join(sentence[i:i1])
         if i1 == j:
             print key
-            #if key is 'bangjiao':
-            #    test = True
             back_pointers = []
             add_match_item_to_cell(key, rules_table, cell, back_pointers)
         else:
@@ -83,10 +81,9 @@ def find_inferable_items(sentence, i, j, rules_table, chart):
                                     add_match_item_to_cell(key3, rules_table,
                                                            cell, back_pointers)
     #cell = []
-    return cell
+    #return cell
 
-def find_glued_items(sentence, i, j, chart):
-    cell = Cell()
+def add_glued_items(sentence, i, j, chart, cell):
     cell.beg = i
     cell.end = j
     for mid in xrange(i+1,j):
@@ -103,10 +100,11 @@ def find_glued_items(sentence, i, j, chart):
             item.back_pointers.append(chart[mid][j])
             cell.add_item(item)
         
-    return cell
+    #return cell
 
 
-rule_file_name = 'rules.txt'
+#rule_file_name = 'rules.txt'
+rule_file_name = 'rules_li.txt'
 glue_rule_file_name = 'glue_rules.txt'
 table = PhraseTable() 
 table.load_rules(rule_file_name, glue_rule_file_name)
@@ -114,8 +112,8 @@ table.load_rules(rule_file_name, glue_rule_file_name)
 #sentence = ['dier', ',', 'zonghezhili', '.']
 #sentence = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 #sentence = ['a', 'b', 'c']
-sentence = ['Auzhou', 'shi', 'yu', 'Beihan', 'you', 'bangjiao', 'de', 'shaoshu', 'guojia', 'zhiyi']
-
+#sentence = ['Auzhou', 'shi', 'yu', 'Beihan', 'you', 'bangjiao', 'de', 'shaoshu', 'guojia', 'zhiyi']
+sentence = ['']
 #i = 0
 #j = 1
 
@@ -128,13 +126,19 @@ for i in xrange(length):
 for l in xrange(1,length+1):
     for i in xrange(0,length-l+1):
         j = i + l
-        cell = find_inferable_items(sentence, i, j, table, chart)
-        if cell.is_item_empty() == False:
-            chart[i][j] = cell
+        cell = Cell()
+        #cell = find_inferable_items(sentence, i, j, table, chart)
+        add_inferable_items(sentence, i, j, table, chart, cell)
+        #if cell.is_item_empty() == False:
+        #    chart[i][j] = cell
 
         if i == 0:
-            cell = find_glued_items(sentence, i, j, chart)
+            add_glued_items(sentence, i, j, chart, cell)
+            #if cell.is_item_empty() == False:
+            #    chart[i][j]
 
+        if cell.is_item_empty() == False:
+            chart[i][j] = cell
 print "chart is :"
 for i in xrange(length):
     for j in xrange(length+1):
