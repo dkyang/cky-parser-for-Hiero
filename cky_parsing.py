@@ -117,7 +117,7 @@ sentence = ['']
 #i = 0
 #j = 1
 
-#chart = [length][length+1]
+#initialize chart
 length = len(sentence)
 chart = [None] * length
 for i in xrange(length):
